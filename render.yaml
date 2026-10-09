@@ -16,3 +16,5 @@ services:
         generateValue: true
       - key: DATABASE_URL
         value: sqlite:///./citylife.db
+      - key: ENABLE_OSM_SYNC
+        value: "true"

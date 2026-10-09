@@ -6,6 +6,7 @@ from backend.app.models.place import Place
 from backend.app.schemas.place import PlaceResponse, PlaceDetailResponse
 from backend.app.services.trust_engine import evaluate_place_trust, calculate_completeness_score
 from backend.app.services.itinerary_solver import haversine_km, estimate_travel_time_min
+from backend.app.services.osm_sync import sync_osm_places
 
 router = APIRouter(prefix="/places", tags=["Places & Discovery"])
 
@@ -130,6 +131,16 @@ def get_categories(db: Session = Depends(get_db)):
     rows = db.query(Place.category).distinct().all()
     categories = [r[0] for r in rows]
     return {"categories": ["all"] + sorted(categories)}
+
+@router.post("/sync-osm")
+def sync_osm(db: Session = Depends(get_db)):
+    """Pull current places from OpenStreetMap (Overpass) and add any new ones."""
+    try:
+        result = sync_osm_places(db)
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"OpenStreetMap sync failed: {e}")
+    total = db.query(Place).count()
+    return {**result, "total_places": total}
 
 @router.get("/{place_id}", response_model=PlaceDetailResponse)
 def get_place_detail(

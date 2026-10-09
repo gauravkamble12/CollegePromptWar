@@ -11,6 +11,8 @@ class Settings(BaseModel):
     UPLOAD_DIR: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "uploads")
     DEFAULT_CITY: str = "Pune, Maharashtra, India"
     DEFAULT_COORDINATES: tuple[float, float] = (18.5204, 73.8567)  # Lat, Lng
+    # When enabled, live OpenStreetMap places are pulled from Overpass on startup
+    ENABLE_OSM_SYNC: bool = os.getenv("ENABLE_OSM_SYNC", "false").strip().lower() in ("1", "true", "yes", "on")
 
 settings = Settings()
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)

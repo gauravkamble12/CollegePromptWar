@@ -1,4 +1,5 @@
 import os
+import threading
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -29,8 +30,24 @@ async def lifespan(app: FastAPI):
         seed_database(db)
     finally:
         db.close()
+
+    # Optionally enrich the catalogue with live OpenStreetMap places (non-blocking)
+    if settings.ENABLE_OSM_SYNC:
+        threading.Thread(target=_run_osm_sync, daemon=True).start()
+
     yield
     # Shutdown logic if any
+
+
+def _run_osm_sync():
+    from backend.app.services.osm_sync import sync_osm_places
+    db = next(get_db())
+    try:
+        sync_osm_places(db)
+    except Exception:
+        pass
+    finally:
+        db.close()
 
 app = FastAPI(
     title=settings.APP_NAME,
