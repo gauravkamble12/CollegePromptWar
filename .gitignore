@@ -1,0 +1,26 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# SQLite & Logs
+*.db
+*.sqlite3
+*.log
+uploads/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
