@@ -34,9 +34,9 @@ describe('PlaceCard', () => {
 
     render(<PlaceCard place={mockPlace as any} onSelect={handleSelect} onOpenTrust={handleOpenTrust} />);
     
-    expect(screen.getByText('Test Monument')).toBeInTheDocument();
-    expect(screen.getByText('historical')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /CityTrust score 92 out of 100/i })).toBeInTheDocument();
+    expect(screen.getByText('Test Monument')).toBeDefined();
+    expect(screen.getByText('historical')).toBeDefined();
+    expect(screen.getByRole('button', { name: /CityTrust score 92 out of 100/i })).toBeDefined();
   });
 
   it('calls handlers when clicked', () => {
