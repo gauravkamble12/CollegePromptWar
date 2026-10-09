@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CalendarDays, Clock, DollarSign, Footprints, ShieldCheck, BookmarkPlus, Printer, Sparkles, AlertCircle } from 'lucide-react';
+import { CalendarDays, Clock, BookmarkPlus, Printer, Sparkles } from 'lucide-react';
 import { api } from '../services/api';
 import { ItineraryPlan } from '../types';
 import { useAuth } from '../context/AuthContext';

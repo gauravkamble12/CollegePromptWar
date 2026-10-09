@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Flag, Upload, Shield, Mic, CheckCircle2, AlertTriangle, Clock, RefreshCw } from 'lucide-react';
+import { Flag, Upload, Shield, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 import { api } from '../services/api';
 import { CivicReport } from '../types';
 import { useAuth } from '../context/AuthContext';
 
 export const CitizenReportForm: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+
   const [reports, setReports] = useState<CivicReport[]>([]);
   const [loadingReports, setLoadingReports] = useState(false);
 
@@ -20,7 +20,7 @@ export const CitizenReportForm: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  const fetchReports = async () => {
+  const fetchReports = React.useCallback(async () => {
     setLoadingReports(true);
     try {
       const data = await api.getReports();
@@ -30,11 +30,11 @@ export const CitizenReportForm: React.FC = () => {
     } finally {
       setLoadingReports(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchReports();
-  }, []);
+  }, [fetchReports]);
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

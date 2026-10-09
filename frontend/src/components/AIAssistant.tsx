@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Bot, Send, Sparkles, ShieldCheck, AlertTriangle, ExternalLink, RefreshCw, User } from 'lucide-react';
+import { Bot, Send, Sparkles, ShieldCheck, AlertTriangle, RefreshCw, User } from 'lucide-react';
 import { api } from '../services/api';
-import { Place } from '../types';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -50,7 +49,7 @@ export const AIAssistant: React.FC<{ onSelectPlace?: (place: any) => void }> = (
         confidenceScore: res.confidence_score
       };
       setMessages((prev) => [...prev, assistantMsg]);
-    } catch (err) {
+    } catch (_err) {
       setMessages((prev) => [
         ...prev,
         {

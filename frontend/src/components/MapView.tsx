@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
-import { Layers, ShieldAlert, MapPin, Eye, ListFilter, AlertTriangle, Info } from 'lucide-react';
+import { Layers, ListFilter, AlertTriangle, Info } from 'lucide-react';
 import { Place, CivicReport } from '../types';
 
 interface MapViewProps {
@@ -15,7 +15,7 @@ export const MapView: React.FC<MapViewProps> = ({
   places,
   incidents,
   onSelectPlace,
-  selectedPlace,
+  selectedPlace: _selectedPlace,
   activeRouteWaypoints
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -25,7 +25,7 @@ export const MapView: React.FC<MapViewProps> = ({
 
   const [showIncidents, setShowIncidents] = useState(true);
   const [showPlaces, setShowPlaces] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCategory] = useState<string>('all');
   const [isListViewActive, setIsListViewActive] = useState(false);
 
   useEffect(() => {

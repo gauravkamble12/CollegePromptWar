@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, LogIn, UserPlus, Shield, User, KeyRound } from 'lucide-react';
+import { X, LogIn, UserPlus, KeyRound } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useModalA11y } from '../hooks/useModalA11y';
 

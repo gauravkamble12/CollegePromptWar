@@ -7,9 +7,7 @@ import {
   Users,
   ShieldCheck,
   MapPin,
-  RefreshCw,
-  Sparkles,
-  Info
+  RefreshCw
 } from 'lucide-react';
 import { Navbar } from './components/Navbar';
 import { CityModeSelector } from './components/CityModeSelector';
@@ -32,7 +30,7 @@ import { Place, CivicReport, ItineraryPlan } from './types';
 import { useAuth } from './context/AuthContext';
 
 export function App() {
-  const { cityMode, setCityMode, isModerator } = useAuth();
+  const { cityMode, setCityMode } = useAuth();
   const [activeTab, setActiveTab] = useState<string>('discover');
 
   // Discovery State
@@ -42,7 +40,7 @@ export function App() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [wheelchairOnly, setWheelchairOnly] = useState<boolean>(false);
   const [familyOnly, setFamilyOnly] = useState<boolean>(false);
-  const [maxBudget, setMaxBudget] = useState<number | undefined>(undefined);
+  const [maxBudget] = useState<number | undefined>(undefined);
   const [loadingPlaces, setLoadingPlaces] = useState<boolean>(false);
 
   // Map & Incident Data
@@ -61,27 +59,25 @@ export function App() {
     api.getReports().then(setIncidents).catch(() => {});
   }, []);
 
-  // Fetch Places whenever filters change
-  const fetchPlaces = async () => {
-    setLoadingPlaces(true);
-    try {
-      const data = await api.getPlaces({
-        category: selectedCategory,
-        search: searchQuery,
-        wheelchairOnly,
-        familyOnly,
-        maxBudget,
-        cityMode
-      });
-      setPlaces(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoadingPlaces(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchPlaces = async () => {
+      setLoadingPlaces(true);
+      try {
+        const data = await api.getPlaces({
+          category: selectedCategory,
+          search: searchQuery,
+          wheelchairOnly,
+          familyOnly,
+          maxBudget,
+          cityMode
+        });
+        setPlaces(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingPlaces(false);
+      }
+    };
     fetchPlaces();
   }, [selectedCategory, searchQuery, wheelchairOnly, familyOnly, maxBudget, cityMode]);
 
@@ -116,7 +112,7 @@ export function App() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search monuments, local food, cafes, parks..."
+                    aria-label="Search places"
                     className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs focus:border-indigo-600 focus:outline-hidden"
                   />
                 </div>

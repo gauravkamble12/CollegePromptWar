@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Star, MapPin, Clock, DollarSign, Accessibility, Car, Check, ExternalLink, ShieldCheck } from 'lucide-react';
+import { X, Star, MapPin, Accessibility, Car, ExternalLink, ShieldCheck } from 'lucide-react';
 import { Place } from '../types';
 import { getPlaceImage } from '../lib/placeImage';
 import { useModalA11y } from '../hooks/useModalA11y';
