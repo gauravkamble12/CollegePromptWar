@@ -82,3 +82,11 @@ def health_check(db: Session = Depends(get_db)):
             "status": "degraded",
             "error": str(e)
         }
+
+# Serve the compiled React SPA (single-origin production deployment).
+# Mounted last so it never shadows the API, uploads, or health routes above.
+FRONTEND_DIST = os.path.abspath(
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "frontend", "dist")
+)
+if os.path.isdir(FRONTEND_DIST):
+    app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")

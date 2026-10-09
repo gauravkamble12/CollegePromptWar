@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: city-life
+    runtime: python
+    plan: free
+    region: singapore
+    branch: master
+    autoDeploy: true
+    buildCommand: pip install -r backend/requirements.txt && npm --prefix frontend ci && npm --prefix frontend run build
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.14"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:///./citylife.db

@@ -131,3 +131,35 @@ For fast review and demonstration, seed credentials are pre-loaded:
 - **Administrator**: `admin` / `admin123` (Full system access)
 - **Moderator**: `moderator` / `mod123` (Access to Civic Review & Moderation Queue)
 - **Explorer User**: `explorer` / `user123` (Saved itineraries and submissions)
+
+---
+
+## 8. Deployment (Render)
+
+The app deploys as a **single Render web service**: the FastAPI backend also serves the compiled React SPA, so the frontend and API share one origin (no CORS or proxy configuration required).
+
+### Architecture
+- **Runtime**: Render native Python `3.14` (Node.js is preinstalled by Render for the frontend build).
+- **Build**: installs Python deps, installs frontend deps, and compiles the Vite production bundle into `frontend/dist/`.
+- **Start**: `uvicorn` binds to Render's `$PORT`.
+- `backend/app/main.py` mounts `frontend/dist` at `/` **last**, so `/api/v1/*`, `/uploads/*`, and `/health` keep working.
+
+### One-Click Blueprint Deploy
+1. Push this repository to GitHub (already configured at `origin`).
+2. In the Render Dashboard, choose **New + → Blueprint** and connect the repo.
+3. Render reads `render.yaml` and provisions the service automatically:
+   - `buildCommand`: `pip install -r backend/requirements.txt && npm --prefix frontend ci && npm --prefix frontend run build`
+   - `startCommand`: `uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`
+   - `healthCheckPath`: `/health`
+   - `SECRET_KEY` is auto-generated at deploy time.
+4. Click **Apply**. First deploy takes a few minutes; the app is then live at `https://<service-name>.onrender.com`.
+
+### Manual (Dashboard) Alternative
+1. **New + → Web Service**, connect the repo, set **Language = Python 3**.
+2. Build Command: `pip install -r backend/requirements.txt && npm --prefix frontend ci && npm --prefix frontend run build`
+3. Start Command: `uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`
+4. Add env vars: `PYTHON_VERSION=3.14`, `SECRET_KEY=<random-string>`, `DATABASE_URL=sqlite:///./citylife.db`.
+5. Health Check Path: `/health`.
+
+### Data Persistence Note
+The free plan uses an **ephemeral filesystem**: the SQLite database (`citylife.db`) and uploaded photos reset on every deploy/restart. The startup lifespan hook recreates and reseeds the database automatically, so the app always boots healthy. For durable data, attach a Render **persistent disk** and point `DATABASE_URL` / `UPLOAD_DIR` at it, or migrate to managed PostgreSQL.
