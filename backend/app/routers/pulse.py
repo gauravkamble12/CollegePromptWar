@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from backend.app.database import get_db
 from backend.app.models.report import CivicReport, ReportStatus
@@ -27,11 +28,16 @@ async def get_city_pulse(db: Session = Depends(get_db)):
         CivicReport.status == ReportStatus.RESOLVED
     ).count()
 
-    # Top active hazard categories
-    active_reps = db.query(CivicReport.category).filter(
-        CivicReport.status.in_([ReportStatus.PENDING_REVIEW, ReportStatus.VERIFIED])
-    ).limit(5).all()
-    top_hazards = [str(r[0].value) for r in active_reps]
+    # Top active hazard categories (aggregated by frequency)
+    hazard_rows = (
+        db.query(CivicReport.category, func.count(CivicReport.id).label("total"))
+        .filter(CivicReport.status.in_([ReportStatus.PENDING_REVIEW, ReportStatus.VERIFIED]))
+        .group_by(CivicReport.category)
+        .order_by(func.count(CivicReport.id).desc())
+        .limit(5)
+        .all()
+    )
+    top_hazards = [str(row[0].value) for row in hazard_rows]
 
     # 4. Providers health
     providers_raw = db.query(ProviderHealthRecord).all()

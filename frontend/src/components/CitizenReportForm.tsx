@@ -115,8 +115,9 @@ export const CitizenReportForm: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Issue Category</label>
+              <label htmlFor="report-category" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Issue Category</label>
               <select
+                id="report-category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:border-indigo-600 focus:outline-hidden"
@@ -133,8 +134,9 @@ export const CitizenReportForm: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Severity Level</label>
+              <label htmlFor="report-severity" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Severity Level</label>
               <select
+                id="report-severity"
                 value={severity}
                 onChange={(e) => setSeverity(e.target.value)}
                 className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:border-indigo-600 focus:outline-hidden"
@@ -148,8 +150,9 @@ export const CitizenReportForm: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Report Title</label>
+            <label htmlFor="report-title" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Report Title</label>
             <input
+              id="report-title"
               type="text"
               required
               minLength={5}
@@ -161,8 +164,9 @@ export const CitizenReportForm: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Location Reference</label>
+            <label htmlFor="report-location" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Location Reference</label>
             <input
+              id="report-location"
               type="text"
               value={addressRef}
               onChange={(e) => setAddressRef(e.target.value)}
@@ -172,8 +176,9 @@ export const CitizenReportForm: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Detailed Description</label>
+            <label htmlFor="report-description" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Detailed Description</label>
             <textarea
+              id="report-description"
               required
               minLength={10}
               rows={3}
@@ -198,6 +203,7 @@ export const CitizenReportForm: React.FC = () => {
             <input
               type="file"
               accept="image/*"
+              aria-label="Upload evidence photo"
               onChange={handlePhotoUpload}
               disabled={uploadingPhoto}
               className="text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"

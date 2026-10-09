@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { X, LogIn, UserPlus, Shield, User, KeyRound } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useModalA11y } from '../hooks/useModalA11y';
 
 interface AuthModalProps {
   onClose: () => void;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
+  const dialogRef = useModalA11y<HTMLDivElement>(onClose);
   const { login, register } = useAuth();
   const [isRegister, setIsRegister] = useState(false);
   const [emailOrUsername, setEmailOrUsername] = useState('');
@@ -50,7 +52,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fadeIn" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
-      <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
+      <div ref={dialogRef} tabIndex={-1} className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 focus:outline-hidden">
         <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
@@ -82,8 +84,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
           {isRegister ? (
             <>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
+                <label htmlFor="auth-fullname" className="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
                 <input
+                  id="auth-fullname"
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
@@ -92,8 +95,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Email Address</label>
+                <label htmlFor="auth-email" className="block text-xs font-bold text-slate-700 mb-1">Email Address</label>
                 <input
+                  id="auth-email"
                   type="email"
                   required
                   value={email}
@@ -103,8 +107,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Username</label>
+                <label htmlFor="auth-username" className="block text-xs font-bold text-slate-700 mb-1">Username</label>
                 <input
+                  id="auth-username"
                   type="text"
                   required
                   value={username}
@@ -116,8 +121,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
             </>
           ) : (
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Email or Username</label>
+              <label htmlFor="auth-emailoruser" className="block text-xs font-bold text-slate-700 mb-1">Email or Username</label>
               <input
+                id="auth-emailoruser"
                 type="text"
                 required
                 value={emailOrUsername}
@@ -129,8 +135,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
           )}
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">Password</label>
+            <label htmlFor="auth-password" className="block text-xs font-bold text-slate-700 mb-1">Password</label>
             <input
+              id="auth-password"
               type="password"
               required
               value={password}

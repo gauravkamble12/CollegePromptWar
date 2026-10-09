@@ -65,6 +65,7 @@ def process_ai_query(query: AIAssistantQuery, available_places: List[Place]) -> 
 
     # Score and filter places based on query semantics
     scored_candidates = []
+    q_words = set(query.query.lower().split())
     for p in available_places:
         relevance = 0.0
         
@@ -77,7 +78,6 @@ def process_ai_query(query: AIAssistantQuery, available_places: List[Place]) -> 
             relevance += 20.0
         
         # Word overlap
-        q_words = set(query.query.lower().split())
         place_words = set((p.name + " " + p.description + " " + p.category).lower().split())
         overlap = len(q_words.intersection(place_words))
         relevance += overlap * 10.0
@@ -103,8 +103,10 @@ def process_ai_query(query: AIAssistantQuery, available_places: List[Place]) -> 
 
     # Generate grounded citations and place cards
     recommended_cards = []
+    trust_scores = []
     for p in top_picks:
         trust = evaluate_place_trust(p)
+        trust_scores.append(trust.composite_score)
         citations.append(GroundedSourceCitation(
             title=p.name,
             source_attribution=p.source_attribution,
@@ -128,6 +130,10 @@ def process_ai_query(query: AIAssistantQuery, available_places: List[Place]) -> 
 
     # Deduplicate caution notes
     caution_notes = list(dict.fromkeys(caution_notes))
+
+    # Derive confidence from the average trust of the recommendations rather than
+    # asserting a fixed number.
+    confidence_score = round(sum(trust_scores) / len(trust_scores), 1) if trust_scores else 0.0
 
     # Construct synthesized, grounded answer
     if intent == "heritage_exploration":
@@ -167,6 +173,6 @@ def process_ai_query(query: AIAssistantQuery, available_places: List[Place]) -> 
         grounded_citations=citations,
         recommended_places=recommended_cards,
         caution_notes=caution_notes,
-        confidence_score=88.5,
+        confidence_score=confidence_score,
         is_sufficient_evidence=True
     )

@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Printer, MapPin, Clock, Phone, AlertCircle } from 'lucide-react';
 import { ItineraryPlan } from '../types';
+import { useModalA11y } from '../hooks/useModalA11y';
 
 interface OfflineTravelCardProps {
   itinerary: ItineraryPlan;
@@ -8,13 +9,14 @@ interface OfflineTravelCardProps {
 }
 
 export const OfflineTravelCard: React.FC<OfflineTravelCardProps> = ({ itinerary, onClose }) => {
+  const dialogRef = useModalA11y<HTMLDivElement>(onClose);
   const handlePrint = () => {
     window.print();
   };
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fadeIn" role="dialog" aria-modal="true" aria-labelledby="offline-card-title">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 p-6 print:p-0 print:border-none print:shadow-none">
+      <div ref={dialogRef} tabIndex={-1} className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 p-6 print:p-0 print:border-none print:shadow-none focus:outline-hidden">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-200 print:hidden">
           <div>

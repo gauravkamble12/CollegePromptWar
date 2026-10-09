@@ -57,10 +57,12 @@ app = FastAPI(
 )
 
 # CORS configuration
+# "*" is only safe for local development; set CORS_ORIGINS in production.
+_allow_all_origins = "*" in settings.cors_origin_list
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In development allow all; configured for production in settings
-    allow_credentials=True,
+    allow_origins=settings.cors_origin_list,
+    allow_credentials=not _allow_all_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )

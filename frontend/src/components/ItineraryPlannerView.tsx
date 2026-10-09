@@ -109,12 +109,13 @@ export const ItineraryPlannerView: React.FC<{ onOpenOfflineCard?: (itinerary: It
 
           {/* Transport Mode & Accessibility */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">Travel Mode</label>
+            <span className="block text-xs font-bold text-slate-700 mb-1.5">Travel Mode</span>
             <div className="flex gap-2">
               {['walking', 'transit', 'driving'].map((m) => (
                 <button
                   key={m}
                   onClick={() => setTransportMode(m)}
+                  aria-pressed={transportMode === m}
                   className={`flex-1 py-1.5 rounded-xl text-xs font-bold capitalize transition-colors ${
                     transportMode === m
                       ? 'bg-indigo-600 text-white shadow-2xs'

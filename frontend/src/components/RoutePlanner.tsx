@@ -67,13 +67,13 @@ export const RoutePlanner: React.FC<RoutePlannerProps> = ({ onRouteSelect }) => 
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Departure Origin</label>
+            <span className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Departure Origin</span>
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800">
               {startPoint.name}
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Target Destination</label>
+            <span className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Target Destination</span>
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800">
               {endPoint.name}
             </div>
@@ -87,6 +87,7 @@ export const RoutePlanner: React.FC<RoutePlannerProps> = ({ onRouteSelect }) => 
               <button
                 key={mode}
                 onClick={() => setTransportMode(mode)}
+                aria-pressed={transportMode === mode}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold capitalize transition-colors ${
                   transportMode === mode
                     ? 'bg-indigo-600 text-white shadow-2xs'

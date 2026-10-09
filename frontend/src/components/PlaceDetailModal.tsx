@@ -2,6 +2,7 @@ import React from 'react';
 import { X, Star, MapPin, Clock, DollarSign, Accessibility, Car, Check, ExternalLink, ShieldCheck } from 'lucide-react';
 import { Place } from '../types';
 import { getPlaceImage } from '../lib/placeImage';
+import { useModalA11y } from '../hooks/useModalA11y';
 
 interface PlaceDetailModalProps {
   place: Place;
@@ -10,9 +11,10 @@ interface PlaceDetailModalProps {
 }
 
 export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClose, onOpenTrust }) => {
+  const dialogRef = useModalA11y<HTMLDivElement>(onClose);
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fadeIn" role="dialog" aria-modal="true" aria-labelledby="modal-place-name">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+      <div ref={dialogRef} tabIndex={-1} className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 focus:outline-hidden">
         {/* Header Image */}
         <div className="relative h-60 w-full overflow-hidden bg-slate-100">
           <img

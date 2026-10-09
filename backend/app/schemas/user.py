@@ -10,7 +10,8 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=6)
-    role: Optional[RoleEnum] = RoleEnum.USER
+    # NOTE: role is intentionally NOT accepted from clients to prevent
+    # privilege escalation. Every self-registered account is a plain USER.
 
 class UserLogin(BaseModel):
     email_or_username: str

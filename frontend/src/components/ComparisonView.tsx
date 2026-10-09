@@ -65,9 +65,9 @@ export const ComparisonView: React.FC<{ places: Place[] }> = ({ places }) => {
 
         {/* Place Selection Chips */}
         <div className="mb-6">
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+          <span className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
             Select 2 to 4 Places to Compare (Active: {selectedIds.length})
-          </label>
+          </span>
           <div className="flex flex-wrap gap-2">
             {places.map((p) => {
               const isSelected = selectedIds.includes(p.id);
@@ -75,6 +75,7 @@ export const ComparisonView: React.FC<{ places: Place[] }> = ({ places }) => {
                 <button
                   key={p.id}
                   onClick={() => togglePlace(p.id)}
+                  aria-pressed={isSelected}
                   className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
                     isSelected
                       ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs'

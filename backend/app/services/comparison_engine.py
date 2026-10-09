@@ -71,7 +71,11 @@ def compare_places(places: List[Place], weights: ComparisonWeights = None) -> Co
                 raw_value=float(p.is_wheelchair_accessible),
                 normalized_score=round(access_norm, 1),
                 weighted_score=round(w_access * access_norm, 1),
-                label="Wheelchair Step-Free" if p.is_wheelchair_accessible == 1 else "Steps/Limited Access"
+                label=(
+                    "Wheelchair Step-Free" if p.is_wheelchair_accessible == 1
+                    else "Steps / Limited Access" if p.is_wheelchair_accessible == -1
+                    else "Accessibility Unverified"
+                )
             ),
             "ratings": DimensionScore(
                 dimension="Ratings & Reviews",

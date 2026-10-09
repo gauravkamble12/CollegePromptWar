@@ -6,7 +6,7 @@ PUNE_KNOWLEDGE_NODES = [
         "name": "Maratha Empire & Peshwa Era (1674–1818)",
         "type": "historical_era",
         "description": "Rich historical period shaping Pune as the seat of the Peshwas and fortress city.",
-        "linked_places": [1, 2, 7], # Shaniwar Wada, Lal Mahal, Sinhagad Fort
+        "linked_places": [1, 11, 12], # Shaniwar Wada, Lal Mahal, Vishrambaug Wada
         "cultural_insights": ["Wada Architecture", "Shivaji Maharaj legacy", "Traditional brass & copper craft"]
     },
     {
@@ -14,7 +14,7 @@ PUNE_KNOWLEDGE_NODES = [
         "name": "Maharashtrian Gastronomic Heritage",
         "type": "tradition",
         "description": "Culinary culture spanning spicy Puneri Misal, Pithla Bhakri, and iconic Chitale Bakarwadi.",
-        "linked_places": [3, 4, 8], # Vaishali, Kata Kirr, Bedekar Tea Stall
+        "linked_places": [3, 4, 8], # Vaishali, Kata Kirr Misal, FC Road food lane
         "cultural_insights": ["Authentic spices", "Generations-old eateries", "College cafe culture on FC Road"]
     },
     {
@@ -22,7 +22,7 @@ PUNE_KNOWLEDGE_NODES = [
         "name": "Swargate Inter-city & Metro Node",
         "type": "transport_hub",
         "description": "Major multimodal transit nexus linking state buses, metro line 1, and city routes.",
-        "linked_places": [1, 3, 5],
+        "linked_places": [1, 7, 10], # Shaniwar Wada, Saras Baug, Pune Junction Hub
         "cultural_insights": ["Key transit interchange for southern Pune"]
     }
 ]

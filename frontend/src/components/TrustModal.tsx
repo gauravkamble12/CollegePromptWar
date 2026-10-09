@@ -1,6 +1,7 @@
 import React from 'react';
 import { ShieldCheck, AlertTriangle, Clock, Database, Layers, X, Info } from 'lucide-react';
 import { Place } from '../types';
+import { useModalA11y } from '../hooks/useModalA11y';
 
 interface TrustModalProps {
   place: Place;
@@ -8,6 +9,7 @@ interface TrustModalProps {
 }
 
 export const TrustModal: React.FC<TrustModalProps> = ({ place, onClose }) => {
+  const dialogRef = useModalA11y<HTMLDivElement>(onClose);
   const trust = place.trust_indicator;
   if (!trust) return null;
 
@@ -22,7 +24,7 @@ export const TrustModal: React.FC<TrustModalProps> = ({ place, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fadeIn" role="dialog" aria-modal="true" aria-labelledby="trust-title">
-      <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+      <div ref={dialogRef} tabIndex={-1} className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto focus:outline-hidden">
         <div className="flex items-center justify-between pb-4 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600">

@@ -8,6 +8,7 @@ from backend.app.models.user import User, RoleEnum
 from backend.app.models.report import CivicReport, ReportCategory, ReportStatus, ModerationLog
 from backend.app.schemas.report import CivicReportCreate, CivicReportResponse, ModerationActionRequest
 from backend.app.security.auth import get_current_user_optional, require_role
+from backend.app.security.rate_limit import rate_limit
 from backend.app.security.exif import sanitize_and_save_image
 from backend.app.services.duplicate_detector import detect_potential_duplicate, analyze_spam_indicators
 
@@ -28,7 +29,8 @@ def get_reports(
     reports = query.order_by(CivicReport.created_at.desc()).all()
     return [CivicReportResponse.model_validate(r) for r in reports]
 
-@router.post("", response_model=CivicReportResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=CivicReportResponse, status_code=status.HTTP_201_CREATED,
+             dependencies=[Depends(rate_limit(20, 60))])
 def submit_report(
     report_in: CivicReportCreate,
     current_user: Optional[User] = Depends(get_current_user_optional),
@@ -83,7 +85,7 @@ def submit_report(
     db.refresh(new_report)
     return CivicReportResponse.model_validate(new_report)
 
-@router.post("/upload-photo")
+@router.post("/upload-photo", dependencies=[Depends(rate_limit(10, 60))])
 async def upload_report_photo(
     file: UploadFile = File(...)
 ):

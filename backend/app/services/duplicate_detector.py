@@ -1,17 +1,7 @@
 from datetime import datetime, timezone
-import math
 from typing import List, Optional
 from backend.app.models.report import CivicReport
-
-def haversine_meters(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    R = 6371000.0 # meters
-    dlat = math.radians(lat2 - lat1)
-    dlon = math.radians(lon2 - lon1)
-    a = (math.sin(dlat / 2) ** 2 +
-         math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) *
-         math.sin(dlon / 2) ** 2)
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    return R * c
+from backend.app.services.geo import haversine_meters
 
 def detect_potential_duplicate(
     new_report_cat: str,

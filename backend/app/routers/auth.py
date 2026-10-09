@@ -4,10 +4,12 @@ from backend.app.database import get_db
 from backend.app.models.user import User, UserPreference, RoleEnum
 from backend.app.schemas.user import UserCreate, UserLogin, UserResponse, Token, UserPreferenceUpdate, UserPreferenceResponse
 from backend.app.security.auth import hash_password, verify_password, create_access_token, get_current_user
+from backend.app.security.rate_limit import rate_limit
 
 router = APIRouter(prefix="/auth", tags=["Authentication & User"])
 
-@router.post("/register", response_model=Token, status_code=status.HTTP_201_CREATED)
+@router.post("/register", response_model=Token, status_code=status.HTTP_201_CREATED,
+             dependencies=[Depends(rate_limit(10, 60))])
 def register(user_in: UserCreate, db: Session = Depends(get_db)):
     # Check email or username collision
     if db.query(User).filter((User.email == user_in.email) | (User.username == user_in.username)).first():
@@ -18,7 +20,7 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
         username=user_in.username,
         hashed_password=hash_password(user_in.password),
         full_name=user_in.full_name,
-        role=user_in.role or RoleEnum.USER
+        role=RoleEnum.USER
     )
     db.add(new_user)
     db.commit()
@@ -32,7 +34,8 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
     token = create_access_token({"sub": str(new_user.id), "role": new_user.role.value})
     return Token(access_token=token, token_type="bearer", user=UserResponse.model_validate(new_user))
 
-@router.post("/login", response_model=Token)
+@router.post("/login", response_model=Token,
+             dependencies=[Depends(rate_limit(10, 60))])
 def login(login_in: UserLogin, db: Session = Depends(get_db)):
     user = db.query(User).filter(
         (User.email == login_in.email_or_username) | (User.username == login_in.email_or_username)

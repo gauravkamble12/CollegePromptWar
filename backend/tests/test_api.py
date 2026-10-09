@@ -125,3 +125,53 @@ def test_city_pulse_telemetry(client):
     data = res.json()
     assert "current_temperature_c" in data
     assert "providers" in data
+
+
+def test_registration_cannot_escalate_role(client):
+    """Clients must never be able to self-assign a privileged role."""
+    res = client.post("/api/v1/auth/register", json={
+        "email": "climber@citylife.org",
+        "username": "climber",
+        "password": "strongPassword123!",
+        "full_name": "Climber",
+        "role": "admin",
+    })
+    assert res.status_code == 201
+    assert res.json()["user"]["role"] == "user"
+
+
+def test_moderation_endpoint_requires_role(client):
+    reports = client.get("/api/v1/reports").json()
+    report_id = reports[0]["id"] if reports else 1
+    payload = {"new_status": "verified"}
+
+    # Anonymous callers are rejected.
+    anon = client.patch(f"/api/v1/reports/{report_id}/moderate", json=payload)
+    assert anon.status_code == 401
+
+    # Authenticated but non-privileged users are forbidden.
+    reg = client.post("/api/v1/auth/register", json={
+        "email": "plainuser@citylife.org",
+        "username": "plainuser",
+        "password": "strongPassword123!",
+    })
+    token = reg.json()["access_token"]
+    forbidden = client.patch(
+        f"/api/v1/reports/{report_id}/moderate",
+        json=payload,
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert forbidden.status_code == 403
+
+
+def test_osm_adapter_extracts_photos():
+    from backend.app.adapters.osm_adapter import _extract_photos
+
+    photos = _extract_photos({
+        "image": "https://example.org/photo.jpg",
+        "wikimedia_commons": "File:Shaniwar Wada.jpg",
+    })
+    assert "https://example.org/photo.jpg" in photos
+    assert any("Special:FilePath/Shaniwar_Wada.jpg" in p for p in photos)
+    assert _extract_photos({}) == []
+

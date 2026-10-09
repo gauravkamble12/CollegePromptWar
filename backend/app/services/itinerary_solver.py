@@ -1,18 +1,8 @@
-import math
 from datetime import datetime, timedelta
 from typing import List, Optional
 from backend.app.models.place import Place
 from backend.app.schemas.itinerary import ItineraryGenerateRequest, ItineraryResponse, ItineraryStopResponse
-
-def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    R = 6371.0 # Earth radius in km
-    dlat = math.radians(lat2 - lat1)
-    dlon = math.radians(lon2 - lon1)
-    a = (math.sin(dlat / 2) ** 2 +
-         math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) *
-         math.sin(dlon / 2) ** 2)
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    return R * c
+from backend.app.services.geo import haversine_km
 
 def estimate_travel_time_min(dist_km: float, mode: str) -> int:
     if mode == "walking":
@@ -30,15 +20,14 @@ def solve_itinerary(
     request: ItineraryGenerateRequest,
     available_places: List[Place]
 ) -> ItineraryResponse:
-    # 1. Filter out incompatible places (accessibility, indoor if rainy, etc.)
+    # 1. Filter out incompatible places (accessibility, etc.)
+    preferred = request.preferred_categories or []
+    apply_preference = bool(preferred) and "all" not in preferred
+
     candidates: List[Place] = []
     for p in available_places:
         if request.accessibility_required and p.is_wheelchair_accessible == -1:
             continue
-        if request.preferred_categories and len(request.preferred_categories) > 0:
-            if p.category not in request.preferred_categories and "all" not in request.preferred_categories:
-                # Give soft penalty or filter
-                pass
         candidates.append(p)
 
     if not candidates:
@@ -83,12 +72,16 @@ def solve_itinerary(
             if (travel_time_h + visit_time_h) > (remaining_hours + 0.25):
                 continue
 
-            # Multi-objective score: high rating, close distance, within budget
+            # Multi-objective score: high rating, close distance, within budget,
+            # and (when the user expressed preferences) a category alignment nudge.
             dist_penalty = dist * 1.5
             cost_penalty = (cost / max(1, request.total_budget_inr)) * 10.0
             quality_bonus = (cand.rating or 4.0) * 15.0
-            
-            cand_score = quality_bonus - dist_penalty - cost_penalty
+            pref_bonus = 0.0
+            if apply_preference:
+                pref_bonus = 12.0 if cand.category in preferred else -8.0
+
+            cand_score = quality_bonus - dist_penalty - cost_penalty + pref_bonus
             if cand_score > best_score:
                 best_score = cand_score
                 best_candidate = cand
