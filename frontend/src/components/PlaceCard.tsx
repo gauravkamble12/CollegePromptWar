@@ -1,6 +1,7 @@
 import React from 'react';
 import { Star, ShieldCheck, Accessibility, Clock, MapPin, ArrowRight } from 'lucide-react';
 import { Place } from '../types';
+import { getPlaceImage } from '../lib/placeImage';
 
 interface PlaceCardProps {
   place: Place;
@@ -16,7 +17,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place, onSelect, onOpenTru
       {/* Thumbnail */}
       <div className="relative h-44 w-full bg-slate-100 overflow-hidden cursor-pointer" onClick={() => onSelect(place)}>
         <img
-          src={place.photos[0] || 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=800&q=80'}
+          src={getPlaceImage(place)}
           alt={place.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           loading="lazy"

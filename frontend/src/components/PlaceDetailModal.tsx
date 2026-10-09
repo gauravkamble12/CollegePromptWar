@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Star, MapPin, Clock, DollarSign, Accessibility, Car, Check, ExternalLink, ShieldCheck } from 'lucide-react';
 import { Place } from '../types';
+import { getPlaceImage } from '../lib/placeImage';
 
 interface PlaceDetailModalProps {
   place: Place;
@@ -15,7 +16,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({ place, onClo
         {/* Header Image */}
         <div className="relative h-60 w-full overflow-hidden bg-slate-100">
           <img
-            src={place.photos[0] || 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=800&q=80'}
+            src={getPlaceImage(place)}
             alt={place.name}
             className="w-full h-full object-cover"
           />

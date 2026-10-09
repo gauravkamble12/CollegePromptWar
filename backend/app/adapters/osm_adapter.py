@@ -99,6 +99,22 @@ def _map_wheelchair(tags: Dict[str, Any]) -> int:
     return 0
 
 
+def _extract_photos(tags: Dict[str, Any]) -> List[str]:
+    """Pull real imagery from OSM tags when available."""
+    photos: List[str] = []
+    image = str(tags.get("image", "")).strip()
+    if image.startswith("http"):
+        photos.append(image)
+    commons = str(tags.get("wikimedia_commons", "")).strip()
+    if commons:
+        file_name = commons.split("File:", 1)[-1].strip().replace(" ", "_")
+        if file_name:
+            photos.append(
+                f"https://commons.wikimedia.org/wiki/Special:FilePath/{file_name}?width=800"
+            )
+    return photos
+
+
 def _map_element(el: Dict[str, Any], category: str) -> Optional[Dict[str, Any]]:
     tags = el.get("tags", {})
     name = tags.get("name") or tags.get("name:en") or tags.get("name:mr")
@@ -148,7 +164,7 @@ def _map_element(el: Dict[str, Any], category: str) -> Optional[Dict[str, Any]]:
         "connectivity_score": 70.0,
         "historical_significance_score": 70.0 if category == "historical" else 40.0,
         "affordability_score": 70.0,
-        "photos": [],
+        "photos": _extract_photos(tags),
         "knowledge_tags": [t for t in knowledge_tags if t][:6],
         "related_place_ids": [],
         "confidence_notes": "Auto-ingested from OpenStreetMap Overpass API (community-mapped, unverified).",
